@@ -7,7 +7,8 @@ k1x is like docker-compose for Kubernetes. Create a `k1x.nix` file describing yo
 No Kubernetes knowledge required.
 
 **All dependencies managed by Nix**
-k1x managed all dependencies using Nix, so you don't have to worry about installing Helm, k3d, kubectl or any other kubernetes developer tool.
+
+k1x manages all dependencies using Nix, so you don't have to worry about installing Helm, k3d, kubectl or any other kubernetes developer tool.
 
 ### Getting started
 
