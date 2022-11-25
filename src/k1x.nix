@@ -1,4 +1,5 @@
-{ pkgs, nix }:
+{ pkgs }:
+
 let
   lib = pkgs.lib;
   version = lib.removeSuffix "\n" (builtins.readFile ./version);
