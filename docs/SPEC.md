@@ -20,12 +20,13 @@ An arbitrary name for the cluster.
 
 Provider specific configurations.
 
-For `k3d` the reference is here: https://k3d.io/v5.3.0/usage/configfile/
+For `k3d` you can find the reference here: https://k3d.io/v5.3.0/usage/configfile/
 
 **k3d example**
 
 ```nix
-[...]
+{...}:
+{
 cluster = {
   name = "mycluster";
   provider = "k3d";
@@ -43,5 +44,50 @@ cluster = {
     }];
   };
 };
-[...]
+}
+```
+
+## Workloads
+
+Specify one or more workloads to be provided with k1x.
+
+### Example of a workload specification
+
+```nix
+{...}:
+
+{
+workloads = [{
+  name = "k8s-dashboard";
+  namespace = "observability";
+  sources = [{
+    type = "helm";
+    ref = "https://kubernetes.github.io/dashboard";
+    chart = "kubernetes-dashboard";
+    parameters = [{
+      name = "ingress.enabled";
+      value = true;
+    }];
+  }
+  {
+  type = "file";
+  content = ''
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: kubernetes-dashboard
+      namespace: kubernetes-dashboard
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: cluster-admin
+    subjects:
+      - kind: ServiceAccount
+        name: kubernetes-dashboard
+        namespace: mynamespace
+  '';
+  }
+  ];
+}];
+}
 ```
