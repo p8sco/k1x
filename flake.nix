@@ -20,6 +20,7 @@
         }) systems);
       mkPackage = pkgs: import ./src/k1x.nix { inherit pkgs; };
     in {
+      modules = ./src/modules;
       packages = forAllSystems (system:
         let pkgs = import nixpkgs { inherit system; };
         in { k1x = mkPackage pkgs; });
