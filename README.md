@@ -43,5 +43,6 @@ And `k1x up` starts the development cluster.
 
 - `k1x init`: Scaffold `k1x.nix`
 - `k1x up`: Starts development cluster
+- `k1x version`: Outputs currenct version
 
 ### License
