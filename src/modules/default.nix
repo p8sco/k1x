@@ -2,7 +2,7 @@
 
 let types = lib.types;
 in {
-  imports = [ ./cluster.nix ];
+  imports = [ ./cluster.nix ./processes.nix ];
   options = {
     version = lib.mkOption {
       type = types.str;
