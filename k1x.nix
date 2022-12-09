@@ -11,12 +11,9 @@
     pushd examples/simple
       # this should fail since files already exist
       k1x init && exit 1
-      rm k1x.nix k1x.yaml .envrc
+      rm k1x.nix
       k1x init
     popd
-
-    # TODO: test direnv integration
-    # TODO: test DIRENV_ACTIVE
   '';
 
   pre-commit.hooks = {
