@@ -34,7 +34,7 @@ in pkgs.writeScriptBin "k1x" ''
       fi
 
       echo "Creating k1x.nix"
-      cat ${examples}/k3d-cluster/k1x.nix > k1x.nix 
+      cat ${examples}/simple/k1x.nix > k1x.nix 
       echo "Appending .k1x* to .gitignore"
       echo ".k1x*" >> .gitignore
       echo "Done."
