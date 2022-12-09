@@ -2,7 +2,7 @@
 
 Reproducible Kubernetes environments for development and testing powered by Nix.
 
-k1x is like docker-compose for Kubernetes. Create a `k1x.nix` file describing your setup, run `nix run ...` and you are good to go.
+k1x is like docker-compose for Kubernetes. Create a `k1x.nix` file describing your setup, run `nix up` and you are good to go.
 
 No Kubernetes knowledge required.
 
