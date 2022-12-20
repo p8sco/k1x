@@ -16,8 +16,7 @@ pkgs.writeText "k1x-flake" ''
         config = project.config;
       in {
         packages."${pkgs.system}" = {
-          inherit (config) info procfileScript procfileEnv procfile;
-          ci = config.ciDerivation;
+          inherit (config) procfileScript procfileEnv procfile;
         };
       };
   }
