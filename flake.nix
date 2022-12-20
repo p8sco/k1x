@@ -2,9 +2,13 @@
   description = "k1x";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nix = {
+      url = "github:nixos/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
   };
-  outputs = { self, nixpkgs, pre-commit-hooks, ... }:
+  outputs = { self, nixpkgs, nix, pre-commit-hooks, ... }:
     let
       systems = [
         "x86_64-linux"
@@ -18,7 +22,7 @@
           inherit name;
           value = f name;
         }) systems);
-      mkPackage = pkgs: import ./src/k1x.nix { inherit pkgs; };
+      mkPackage = pkgs: import ./src/k1x.nix { inherit pkgs nix; };
     in {
       modules = ./src/modules;
       packages = forAllSystems (system:
