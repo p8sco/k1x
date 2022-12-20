@@ -1,7 +1,7 @@
 {
   description = "k1x";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-22.05";
     nix = {
       url = "github:nixos/nix";
       inputs.nixpkgs.follows = "nixpkgs";
