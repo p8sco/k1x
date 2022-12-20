@@ -26,7 +26,6 @@ in {
     process = {
       implementation = lib.mkOption {
         type = types.enum [ "honcho" "overmind" "hivemind" ];
-        description = "The implementation used when performing ``devenv up``.";
         default = "honcho";
         example = "overmind";
       };
