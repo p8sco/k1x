@@ -19,6 +19,17 @@ in pkgs.writeScriptBin "k1x" ''
   case $command in
     up)
       echo "Starting k1x ..." 1>&2
+      shell
+      eval "$env"
+      procfilescript=$($CUSTOM_NIX/bin/nix $NIX_FLAGS build --no-link --print-out-paths --impure '.#procfileScript')
+      cat $procfilescript
+      if [ "$(cat $procfilescript|tail -n +2)" = "" ]; then
+        echo "No 'processes' option defined"
+        exit 1
+      else
+        add_gc procfilescript $procfilescript
+        $procfilescript
+      fi
       ;;
     init)
       if [ "$#" -eq "1" ]
