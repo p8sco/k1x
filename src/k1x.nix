@@ -16,7 +16,7 @@ in pkgs.writeScriptBin "k1x" ''
 
   function assemble {
     export K1X_DIR="$(pwd)/.k1x"
-    export K1X_GC="$DEVENV_DIR/gc"
+    export K1X_GC="$K1X_DIR/gc"
     mkdir -p "$K1X_GC"
   }
 
