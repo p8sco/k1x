@@ -1,15 +1,49 @@
-{ pkgs }:
+{ pkgs, nix }:
 
 let
-  lib = pkgs.lib;
-  version = lib.removeSuffix "\n" (builtins.readFile ./version);
   examples = ../examples;
+  lib = pkgs.lib;
+  version = lib.fileContents ./version;
 in pkgs.writeScriptBin "k1x" ''
   #!/usr/bin/env bash
 
+  # we want subshells to fail the program
   set -e
 
   NIX_FLAGS="--show-trace --extra-experimental-features nix-command --extra-experimental-features flakes"
+
+  CUSTOM_NIX=${nix.packages.${pkgs.system}.nix}
+
+  function assemble {
+    export K1X_DIR="$(pwd)/.k1x"
+    export K1X_GC="$DEVENV_DIR/gc"
+    mkdir -p "$K1X_GC"
+  }
+
+  if [[ -z "$XDG_DATA_HOME" ]]; then
+    GC_ROOT="$HOME/.k1x/gc"
+  else 
+    GC_ROOT="$XDG_DATA_HOME/k1x/gc"
+  fi
+
+  mkdir -p "$GC_ROOT"
+  GC_DIR="$GC_ROOT/$(date +%s)"
+
+  function add_gc {
+    name=$1
+    storePath=$2
+
+    nix-store --add-root "$K1X_GC/$name" -r $storePath >/dev/null
+    ln -sf $storePath "$GC_DIR-$name"
+  }
+
+  function shell {
+    assemble
+    echo "Building shell ..." 1>&2
+    env=$($CUSTOM_NIX/bin/nix $NIX_FLAGS print-dev-env --impure --profile "$K1X_GC/shell")
+    $CUSTOM_NIX/bin/nix-env -p "$K1X_GC/shell" --delete-generations old 2>/dev/null
+    ln -sf $(${pkgs.coreutils}/bin/readlink -f "$K1X_GC/shell") "$GC_DIR-shell"
+  }
 
   command=$1
   if [[ ! -z $command ]]; then
@@ -18,7 +52,6 @@ in pkgs.writeScriptBin "k1x" ''
 
   case $command in
     up)
-      echo "Starting k1x ..." 1>&2
       shell
       eval "$env"
       procfilescript=$($CUSTOM_NIX/bin/nix $NIX_FLAGS build --no-link --print-out-paths --impure '.#procfileScript')
