@@ -11,13 +11,16 @@ in pkgs.writeScriptBin "k1x" ''
   set -e
 
   NIX_FLAGS="--show-trace --extra-experimental-features nix-command --extra-experimental-features flakes"
-
   CUSTOM_NIX=${nix.packages.${pkgs.system}.nix}
+  export FLAKE_FILE=.k1x.flake.nix
 
   function assemble {
     export K1X_DIR="$(pwd)/.k1x"
     export K1X_GC="$K1X_DIR/gc"
     mkdir -p "$K1X_GC"
+
+    cp -f ${import ./flake.nix { inherit pkgs; }} "$FLAKE_FILE"
+    chmod +w "$FLAKE_FILE"
   }
 
   if [[ -z "$XDG_DATA_HOME" ]]; then
