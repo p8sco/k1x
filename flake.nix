@@ -27,6 +27,6 @@
       modules = ./src/modules;
       packages = forAllSystems (system:
         let pkgs = import nixpkgs { inherit system; };
-        in { default = mkPackage pkgs; });
+        in { k1x = mkPackage pkgs; });
     };
 }
