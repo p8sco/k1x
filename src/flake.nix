@@ -8,12 +8,12 @@ pkgs.writeText "k1x-flake" ''
     outputs = { nixpkgs, ... }@inputs:
       let
         pkgs = import nixpkgs { system = "${pkgs.system}"; };
-        lib = pkgs.lib;
         project = pkgs.lib.evalModules {
           specialArgs = inputs // { inherit inputs pkgs; };
           modules = [ ./k1x.nix ];
         };
-        config = project.config;
+        inherit (pkgs) lib;
+        inherit (project) config;
       in {
         packages."${pkgs.system}" = {
           inherit (config) procfileScript procfileEnv procfile;
