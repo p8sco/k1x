@@ -40,14 +40,6 @@ in pkgs.writeScriptBin "k1x" ''
     ln -sf $storePath "$GC_DIR-$name"
   }
 
-  function shell {
-    assemble
-    echo "Building shell ..." 1>&2
-    env=$($CUSTOM_NIX/bin/nix $NIX_FLAGS print-dev-env --impure --profile "$K1X_GC/shell")
-    $CUSTOM_NIX/bin/nix-env -p "$K1X_GC/shell" --delete-generations old 2>/dev/null
-    ln -sf $(${pkgs.coreutils}/bin/readlink -f "$K1X_GC/shell") "$GC_DIR-shell"
-  }
-
   command=$1
   if [[ ! -z $command ]]; then
     shift
@@ -55,7 +47,7 @@ in pkgs.writeScriptBin "k1x" ''
 
   case $command in
     up)
-      shell
+      assemble 
       eval "$env"
       procfilescript=$($CUSTOM_NIX/bin/nix $NIX_FLAGS build --no-link --print-out-paths --impure '.#procfileScript')
       cat $procfilescript
