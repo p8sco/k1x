@@ -18,6 +18,7 @@ pkgs.writeText "k1x-flake" ''
         packages."${pkgs.system}" = {
           inherit (config) procfileScript procfileEnv procfile;
         };
+        devShell."${pkgs.system}" = config.shell;
       };
   }
 ''
