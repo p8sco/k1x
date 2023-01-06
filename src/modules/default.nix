@@ -1,6 +1,8 @@
 { config, pkgs, lib, ... }:
 
-let types = lib.types;
+let
+  types = lib.types;
+  mkNakedShell = pkgs.callPackage ./mkNakedShell.nix { };
 in {
   imports = [ ./cluster.nix ./processes.nix ];
   options = {
@@ -32,4 +34,5 @@ in {
         });
     };
   };
+  config = { shell = mkNakedShell { }; };
 }
