@@ -45,3 +45,5 @@ And `k1x up` starts the development cluster.
 - `k1x version`: Outputs current version
 
 ### License
+
+This project is licensed under the [MIT License](LICENSE).
