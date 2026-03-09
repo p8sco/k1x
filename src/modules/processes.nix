@@ -11,7 +11,6 @@ let
     };
   });
   implementation = config.process.implementation;
-  implementation-options = config.process.${implementation};
   envList =
     (lib.mapAttrsToList (name: value: "${name}=${toString value}") config.env);
 in {
@@ -25,8 +24,8 @@ in {
 
     process = {
       implementation = lib.mkOption {
-        type = types.enum [ "honcho" "overmind" "hivemind" ];
-        default = "honcho";
+        type = types.enum [ "process-compose" "overmind" "hivemind" ];
+        default = "process-compose";
         example = "overmind";
       };
     };
@@ -48,20 +47,38 @@ in {
   };
 
   config = lib.mkIf (config.processes != { }) {
-    packages = [ pkgs.${implementation} ];
+    packages = {
+      process-compose = [ pkgs.process-compose ];
+      overmind = [ pkgs.overmind ];
+      hivemind = [ pkgs.hivemind ];
+    }.${implementation};
 
-    procfile = pkgs.writeText "procfile" (lib.concatStringsSep "\n"
-      (lib.mapAttrsToList (name: process: "${name}: ${process.exec}")
-        config.processes));
+    procfile = {
+      process-compose = pkgs.writeText "process-compose.yaml"
+        (builtins.toJSON {
+          version = "0.5";
+          processes = lib.mapAttrs (name: process: {
+            command = process.exec;
+          }) config.processes;
+        });
+
+      overmind = pkgs.writeText "procfile" (lib.concatStringsSep "\n"
+        (lib.mapAttrsToList (name: process: "${name}: ${process.exec}")
+          config.processes));
+
+      hivemind = pkgs.writeText "procfile" (lib.concatStringsSep "\n"
+        (lib.mapAttrsToList (name: process: "${name}: ${process.exec}")
+          config.processes));
+    }.${implementation};
 
     procfileEnv =
       pkgs.writeText "procfile-env" (lib.concatStringsSep "\n" envList);
 
     procfileScript = {
-      honcho = pkgs.writeShellScript "honcho-up" ''
+      process-compose = pkgs.writeShellScript "process-compose-up" ''
         echo "Starting processes ..." 1>&2
         echo "" 1>&2
-        ${pkgs.honcho}/bin/honcho start -f ${config.procfile} --env ${config.procfileEnv}
+        ${pkgs.process-compose}/bin/process-compose up -f ${config.procfile}
       '';
 
       overmind = pkgs.writeShellScript "overmind-up" ''

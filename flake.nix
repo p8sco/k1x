@@ -1,32 +1,34 @@
 {
-  description = "k1x";
+  description = "k1x - Reproducible Kubernetes environments powered by Nix";
+
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/release-22.05";
-    nix = {
-      url = "github:nixos/nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
-  outputs = { self, nixpkgs, nix, pre-commit-hooks, ... }:
-    let
-      systems = [
-        "x86_64-linux"
-        "i686-linux"
-        "x86_64-darwin"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
-      forAllSystems = f:
-        builtins.listToAttrs (map (name: {
-          inherit name;
-          value = f name;
-        }) systems);
-      mkPackage = pkgs: import ./src/k1x.nix { inherit pkgs nix; };
-    in {
-      modules = ./src/modules;
-      packages = forAllSystems (system:
-        let pkgs = import nixpkgs { inherit system; };
-        in { k1x = mkPackage pkgs; });
+
+  outputs = inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+
+      perSystem = { pkgs, ... }:
+        let
+          k1x = import ./src/k1x.nix { inherit pkgs; };
+        in
+        {
+          packages = {
+            inherit k1x;
+            default = k1x;
+          };
+
+          devShells.default = pkgs.mkShell {
+            packages = [ k1x pkgs.watchexec pkgs.nixpkgs-fmt pkgs.shellcheck ];
+          };
+
+          formatter = pkgs.nixpkgs-fmt;
+        };
+
+      flake = {
+        modules = ./src/modules;
+      };
     };
 }

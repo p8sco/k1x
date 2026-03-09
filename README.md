@@ -2,7 +2,7 @@
 
 Reproducible Kubernetes environments for development and testing powered by Nix.
 
-k1x is like docker-compose for Kubernetes. Create a `k1x.nix` file describing your setup, run `nix up` and you are good to go.
+k1x is like docker-compose for Kubernetes. Create a `k1x.nix` file describing your setup, run `k1x up` and you are good to go.
 
 No Kubernetes knowledge required.
 
@@ -23,11 +23,10 @@ Running `k1x init` generates a `k1x.nix` containing:
     name = "mycluster";
     provider = "k3d";
     nativeConfig = {
-      apiVersion = "k3d.io/v1alpha2";
+      apiVersion = "k3d.io/v1alpha5";
       kind = "Simple";
       servers = 1;
       agents = 2;
-      image = "rancher/k3s:v1.22.9-k3s1";
       ports = [{
         port = "8080:80";
         nodeFilters = [ "loadbalancer" ];
@@ -43,6 +42,6 @@ And `k1x up` starts the development cluster.
 
 - `k1x init`: Scaffold `k1x.nix`
 - `k1x up`: Starts development cluster
-- `k1x version`: Outputs currenct version
+- `k1x version`: Outputs current version
 
 ### License
