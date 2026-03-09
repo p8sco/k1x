@@ -10,7 +10,26 @@ No Kubernetes knowledge required.
 
 k1x manages all dependencies using Nix, so you don't have to worry about installing Helm, k3d, kubectl or any other kubernetes developer tool.
 
-### Getting started
+## Prerequisites
+
+- [Nix](https://nixos.org/download/) with [flakes enabled](https://wiki.nixos.org/wiki/Flakes)
+
+## Installation
+
+Run k1x directly without installing:
+
+```sh
+nix run github:p8sco/k1x -- init
+nix run github:p8sco/k1x -- up
+```
+
+Or install it to your profile:
+
+```sh
+nix profile install github:p8sco/k1x
+```
+
+## Getting started
 
 Running `k1x init` generates a `k1x.nix` containing:
 
@@ -38,12 +57,57 @@ Running `k1x init` generates a `k1x.nix` containing:
 
 And `k1x up` starts the development cluster.
 
-### Usage
+## Usage
 
-- `k1x init`: Scaffold `k1x.nix`
-- `k1x up`: Starts development cluster
-- `k1x version`: Outputs current version
+- `k1x init [TARGET]`: Scaffold `k1x.nix` in the current or target directory
+- `k1x up`: Start the development cluster in foreground
+- `k1x version`: Output current version
 
-### License
+## Building locally
+
+Clone the repository and build with Nix:
+
+```sh
+git clone https://github.com/p8sco/k1x.git
+cd k1x
+nix build
+```
+
+The built binary will be available at `./result/bin/k1x`.
+
+To build and run in one step:
+
+```sh
+nix run .
+```
+
+## Development
+
+Enter the development shell which includes k1x, watchexec, nixpkgs-fmt, and shellcheck:
+
+```sh
+nix develop
+```
+
+Format Nix files:
+
+```sh
+nix fmt
+```
+
+Run shellcheck on the k1x script after building:
+
+```sh
+shellcheck ./result/bin/k1x
+```
+
+## Supported platforms
+
+- `x86_64-linux`
+- `aarch64-linux`
+- `x86_64-darwin`
+- `aarch64-darwin`
+
+## License
 
 This project is licensed under the [MIT License](LICENSE).
