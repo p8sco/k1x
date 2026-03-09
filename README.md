@@ -109,3 +109,5 @@ shellcheck ./result/bin/k1x
 - `aarch64-darwin`
 
 ## License
+
+This project is licensed under the [MIT License](LICENSE).
