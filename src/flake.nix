@@ -3,7 +3,7 @@
 pkgs.writeText "k1x-flake" ''
   {
     inputs = {
-      nixpkgs.url = "github:NixOS/nixpkgs/release-22.04";
+      nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     };
     outputs = { nixpkgs, ... }@inputs:
       let
@@ -18,7 +18,7 @@ pkgs.writeText "k1x-flake" ''
         packages."${pkgs.system}" = {
           inherit (config) procfileScript procfileEnv procfile;
         };
-        devShell."${pkgs.system}" = config.shell;
+        devShells."${pkgs.system}".default = config.shell;
       };
   }
 ''

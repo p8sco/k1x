@@ -14,6 +14,16 @@ in {
       default = "k8s-cluster";
       description = "Name of the cluster";
     };
+    provider = mkOption {
+      type = types.str;
+      default = "k3d";
+      description = "Cluster provisioner (currently only k3d is supported)";
+    };
+    nativeConfig = mkOption {
+      type = types.attrs;
+      default = { };
+      description = "Provider-specific configuration";
+    };
   };
   config = {
     packages = with pkgs; [ kube3d kubectl ];

@@ -1,4 +1,4 @@
-{ pkgs, nix }:
+{ pkgs }:
 
 let
   examples = ../examples;
@@ -10,8 +10,7 @@ in pkgs.writeScriptBin "k1x" ''
   # we want subshells to fail the program
   set -e
 
-  NIX_FLAGS="--show-trace --extra-experimental-features nix-command --extra-experimental-features flakes"
-  CUSTOM_NIX=${nix.packages.${pkgs.system}.nix}
+  NIX_FLAGS="--show-trace"
   export FLAKE_FILE=.k1x.flake.nix
 
   function assemble {
@@ -25,7 +24,7 @@ in pkgs.writeScriptBin "k1x" ''
 
   if [[ -z "$XDG_DATA_HOME" ]]; then
     GC_ROOT="$HOME/.k1x/gc"
-  else 
+  else
     GC_ROOT="$XDG_DATA_HOME/k1x/gc"
   fi
 
@@ -43,8 +42,8 @@ in pkgs.writeScriptBin "k1x" ''
   function shell {
     assemble
     echo "Building shell ..." 1>&2
-    env=$($CUSTOM_NIX/bin/nix $NIX_FLAGS print-dev-env --impure --profile "$K1X_GC/shell")
-    $CUSTOM_NIX/bin/nix-env -p "$K1X_GC/shell" --delete-generations old 2>/dev/null
+    env=$(nix $NIX_FLAGS print-dev-env --impure --profile "$K1X_GC/shell")
+    nix-env -p "$K1X_GC/shell" --delete-generations old 2>/dev/null
     ln -sf $(${pkgs.coreutils}/bin/readlink -f "$K1X_GC/shell") "$GC_DIR-shell"
   }
 
@@ -57,7 +56,7 @@ in pkgs.writeScriptBin "k1x" ''
     up)
       shell
       eval "$env"
-      procfilescript=$($CUSTOM_NIX/bin/nix $NIX_FLAGS build --no-link --print-out-paths --impure '.#procfileScript')
+      procfilescript=$(nix $NIX_FLAGS build --no-link --print-out-paths --impure '.#procfileScript')
       cat $procfilescript
       if [ "$(cat $procfilescript|tail -n +2)" = "" ]; then
         echo "No 'processes' option defined"
@@ -81,7 +80,7 @@ in pkgs.writeScriptBin "k1x" ''
       fi
 
       echo "Creating k1x.nix"
-      cat ${examples}/simple/k1x.nix > k1x.nix 
+      cat ${examples}/simple/k1x.nix > k1x.nix
       echo "Appending .k1x* to .gitignore"
       echo ".k1x*" >> .gitignore
       echo "Done."
@@ -104,4 +103,3 @@ in pkgs.writeScriptBin "k1x" ''
       exit 1
   esac
 ''
-
